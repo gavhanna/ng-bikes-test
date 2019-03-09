@@ -42,7 +42,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var routes = [
-    { path: '', component: _components_map_map_component__WEBPACK_IMPORTED_MODULE_3__["MapComponent"] }
+    { path: '**', component: _components_map_map_component__WEBPACK_IMPORTED_MODULE_3__["MapComponent"] }
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -67,7 +67,7 @@ var AppRoutingModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<app-navbar></app-navbar>\r\n<router-outlet></router-outlet>"
+module.exports = "<app-navbar></app-navbar>\n<router-outlet></router-outlet>"
 
 /***/ }),
 
@@ -98,8 +98,13 @@ __webpack_require__.r(__webpack_exports__);
 
 var AppComponent = /** @class */ (function () {
     function AppComponent() {
-        this.title = 'This Shit';
     }
+    AppComponent.prototype.ngOnInit = function () {
+        if (!localStorage.getItem('faves'))
+            localStorage.setItem('faves', '[]');
+        if (!localStorage.getItem('locations'))
+            localStorage.setItem('locations', '[]');
+    };
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-root',
@@ -135,6 +140,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./../environments/environment */ "./src/environments/environment.ts");
 /* harmony import */ var _components_info_info_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/info/info.component */ "./src/app/components/info/info.component.ts");
 /* harmony import */ var _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/navbar/navbar.component */ "./src/app/components/navbar/navbar.component.ts");
+/* harmony import */ var _components_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/favourites/favourites.component */ "./src/app/components/favourites/favourites.component.ts");
+/* harmony import */ var _components_percentbar_percentbar_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/percentbar/percentbar.component */ "./src/app/components/percentbar/percentbar.component.ts");
+
+
 
 
 
@@ -155,7 +164,9 @@ var AppModule = /** @class */ (function () {
                 _app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"],
                 _components_map_map_component__WEBPACK_IMPORTED_MODULE_7__["MapComponent"],
                 _components_info_info_component__WEBPACK_IMPORTED_MODULE_9__["InfoComponent"],
-                _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__["NavbarComponent"]
+                _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__["NavbarComponent"],
+                _components_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_11__["FavouritesComponent"],
+                _components_percentbar_percentbar_component__WEBPACK_IMPORTED_MODULE_12__["PercentbarComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
@@ -176,6 +187,80 @@ var AppModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/components/favourites/favourites.component.html":
+/*!*****************************************************************!*\
+  !*** ./src/app/components/favourites/favourites.component.html ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "\n  <section class=\"section\">\n    <div class=\"columns is-centered\">\n        <h3 class=\"is-centered\" *ngIf=\"faves.length < 1\">No favourites saved yet!</h3>\n        <div *ngIf=\"faves.length >= 1\" class=\"column is-narrow\">\n            <h2 class=\"title\">Favourites</h2>\n            <table class=\"table\">\n                <thead>\n                    <tr>\n                        <td>Address</td>\n                        <td>Bikes</td>\n                        <td>Spaces</td>\n                        <td>&nbsp;</td>\n                    </tr>\n                </thead>\n                <tbody>\n                    <ng-container *ngFor=\"let f of faves\">\n                        <tr>\n                            <td>{{ f.address }}</td>\n                            <td>{{ f.available_bikes }}</td>\n                            <td>{{ f.available_bike_stands }}</td>\n                            <td><button (click)=\"removeFave(f)\" class=\"button is-rounded is-danger remove-fave-btn\">x</button></td>\n                        </tr>\n                        <tr>\n                            <td colspan=\"4\">\n                                <span class=\"infobar-row\">\n                                    <app-percentbar [h]=\"10\" [bikes]=\"f.available_bikes\" [stands]=\"f.bike_stands\"></app-percentbar>\n                                </span>\n                            </td>\n                        </tr>\n                    </ng-container>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</section>"
+
+/***/ }),
+
+/***/ "./src/app/components/favourites/favourites.component.scss":
+/*!*****************************************************************!*\
+  !*** ./src/app/components/favourites/favourites.component.scss ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ".remove-fave-btn {\n  position: relative;\n  top: -5px; }\n\n.infobar-row {\n  position: relative;\n  top: -18px; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9mYXZvdXJpdGVzL2Zhdm91cml0ZXMuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxrQkFBa0I7RUFDbEIsU0FBUyxFQUFBOztBQUdiO0VBQ0ksa0JBQWtCO0VBQ2xCLFVBQVUsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvZmF2b3VyaXRlcy9mYXZvdXJpdGVzLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLnJlbW92ZS1mYXZlLWJ0biB7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIHRvcDogLTVweDtcbn1cblxuLmluZm9iYXItcm93IHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgdG9wOiAtMThweDtcbn0iXX0= */"
+
+/***/ }),
+
+/***/ "./src/app/components/favourites/favourites.component.ts":
+/*!***************************************************************!*\
+  !*** ./src/app/components/favourites/favourites.component.ts ***!
+  \***************************************************************/
+/*! exports provided: FavouritesComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FavouritesComponent", function() { return FavouritesComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_app_services_storage_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/storage.service */ "./src/app/services/storage.service.ts");
+
+
+
+var FavouritesComponent = /** @class */ (function () {
+    function FavouritesComponent(storage) {
+        this.storage = storage;
+        this.favesList = [];
+    }
+    FavouritesComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.storage.faves.subscribe(function (faves) {
+            _this.favesList = faves;
+            if (_this.locationsList)
+                _this.faves = _this.locationsList.filter(function (l) { return _this.favesList.indexOf(l.number) >= 0; });
+        });
+        this.storage.locations.subscribe(function (locations) {
+            _this.locationsList = locations;
+            _this.faves = locations.filter(function (l) { return _this.favesList.indexOf(l.number) >= 0; });
+        });
+    };
+    FavouritesComponent.prototype.removeFave = function (l) {
+        if (confirm("Remove from favourites?"))
+            this.storage.removeFavourite(l);
+    };
+    FavouritesComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+            selector: 'app-favourites',
+            template: __webpack_require__(/*! ./favourites.component.html */ "./src/app/components/favourites/favourites.component.html"),
+            styles: [__webpack_require__(/*! ./favourites.component.scss */ "./src/app/components/favourites/favourites.component.scss")]
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_storage_service__WEBPACK_IMPORTED_MODULE_2__["StorageService"]])
+    ], FavouritesComponent);
+    return FavouritesComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/components/info/info.component.html":
 /*!*****************************************************!*\
   !*** ./src/app/components/info/info.component.html ***!
@@ -183,7 +268,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"location\" [ngClass]=\"{'show': location?.number}\" class=\"card info-card\">\r\n  <div class=\"card-content\">\r\n    <div class=\"media\">\r\n      <div class=\"media-content has-text-centered\">\r\n        <p class=\"title is-4\">{{location.address}}</p>\r\n        <span><span class=\"location-status\" [ngClass]=\"{'green': location.status === 'OPEN'}\">{{location.status}}</span>\r\n        </span>\r\n        <p class=\"subtitle is-6\">\r\n          <time datetime=\"2016-1-1\">Last updated: {{location.last_update | date: 'h:mm a'}}</time>\r\n        </p>\r\n      </div>\r\n    </div>\r\n\r\n    <div class=\"level\">\r\n      <div class=\"level-item has-text-centered\">\r\n        <div>\r\n          <p class=\"heading\">Bikes</p>\r\n          <p class=\"title\">{{location.available_bikes}}</p>\r\n        </div>\r\n      </div>\r\n      <div class=\"level-item has-text-centered\">\r\n        <div>\r\n          <p class=\"heading\">Spaces</p>\r\n          <p class=\"title\">{{location.available_bike_stands}}</p>\r\n        </div>\r\n      </div>\r\n    </div>\r\n    <figure>\r\n      <div style=\"height: 20px; background: lightgreen;\"\r\n        [ngStyle]=\"{'width': ' '+ (location.available_bikes / location.bike_stands * 100) + '%'}\"></div>\r\n    </figure>\r\n  </div>\r\n</div>"
+module.exports = "<div *ngIf=\"location\" [ngClass]=\"{'show': location?.number}\" class=\"card info-card\">\n  <div class=\"card-content\">\n    <div class=\"media\">\n      <div class=\"media-content has-text-centered\">\n        <p class=\"title is-4\">{{location.address}}</p>\n        <span><span class=\"location-status\" [ngClass]=\"{'green': location.status === 'OPEN'}\">{{location.status}}</span>\n        </span>\n        <p class=\"subtitle is-6\">\n          <time datetime=\"2016-1-1\">Last updated: {{location.last_update | date: 'h:mm a'}}</time>\n        </p>\n      </div>\n    </div>\n    <a *ngIf=\"!location.fave\" (click)=\"onFaveBtnClick()\" class=\"button is-rounded fave-btn\"><3</a>\n    <a *ngIf=\"location.fave\" (click)=\"onFaveRemoveClick()\" class=\"button is-rounded fave-btn is-warning\"><3</a>\n    <div class=\"level\">\n      <div class=\"level-item has-text-centered\">\n        <div>\n          <p class=\"heading\">Bikes</p>\n          <p class=\"title\">{{location.available_bikes}}</p>\n        </div>\n      </div>\n      <div class=\"level-item has-text-centered\">\n        <div>\n          <p class=\"heading\">Spaces</p>\n          <p class=\"title\">{{location.available_bike_stands}}</p>\n        </div>\n      </div>\n    </div>\n    <app-percentbar [h]=\"20\" [bikes]=\"location.available_bikes\" [stands]=\"location.bike_stands\"></app-percentbar>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -194,7 +279,7 @@ module.exports = "<div *ngIf=\"location\" [ngClass]=\"{'show': location?.number}
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "div.info-card {\n  position: fixed;\n  bottom: -1000px;\n  transition: all .2s ease-in-out;\n  width: 100%; }\n  div.info-card .card-content {\n    max-width: 400px;\n    margin: 0 auto; }\n  div.info-card.show {\n    bottom: 0px; }\n  .title {\n  margin-bottom: 5px; }\n  .green {\n  background: lightgreen; }\n  .red {\n  background: salmon; }\n  .location-status {\n  padding: 3px;\n  border-radius: 5px;\n  font-size: 16px;\n  color: #333; }\n  figure {\n  height: 20px;\n  width: 100%;\n  background: salmon; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9pbmZvL0M6XFxVc2Vyc1xcZ2F2aGFcXERlc2t0b3BcXHBlcnNvbmFsX3Byb2plY3RzXFxkdWJsaW4tYmlrZXMtbmcvc3JjXFxhcHBcXGNvbXBvbmVudHNcXGluZm9cXGluZm8uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxlQUFlO0VBQ2YsZUFBZTtFQUNmLCtCQUErQjtFQUMvQixXQUFXLEVBQUE7RUFKYjtJQU1JLGdCQUFnQjtJQUNoQixjQUFjLEVBQUE7RUFQbEI7SUFVSSxXQUFXLEVBQUE7RUFJZjtFQUNFLGtCQUFrQixFQUFBO0VBR3BCO0VBQ0Usc0JBQXNCLEVBQUE7RUFHeEI7RUFDRSxrQkFBa0IsRUFBQTtFQUdwQjtFQUNFLFlBQVk7RUFDWixrQkFBa0I7RUFDbEIsZUFBZTtFQUNmLFdBQVcsRUFBQTtFQUdiO0VBQ0UsWUFBWTtFQUNaLFdBQVc7RUFDWCxrQkFBa0IsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvaW5mby9pbmZvLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiZGl2LmluZm8tY2FyZCB7XHJcbiAgcG9zaXRpb246IGZpeGVkO1xyXG4gIGJvdHRvbTogLTEwMDBweDtcclxuICB0cmFuc2l0aW9uOiBhbGwgLjJzIGVhc2UtaW4tb3V0O1xyXG4gIHdpZHRoOiAxMDAlO1xyXG4gIC5jYXJkLWNvbnRlbnQge1xyXG4gICAgbWF4LXdpZHRoOiA0MDBweDtcclxuICAgIG1hcmdpbjogMCBhdXRvO1xyXG4gIH1cclxuICAmLnNob3cge1xyXG4gICAgYm90dG9tOiAwcHg7XHJcbiAgfVxyXG59XHJcblxyXG4udGl0bGUge1xyXG4gIG1hcmdpbi1ib3R0b206IDVweDtcclxufVxyXG5cclxuLmdyZWVuIHtcclxuICBiYWNrZ3JvdW5kOiBsaWdodGdyZWVuO1xyXG59XHJcblxyXG4ucmVkIHtcclxuICBiYWNrZ3JvdW5kOiBzYWxtb247XHJcbn1cclxuXHJcbi5sb2NhdGlvbi1zdGF0dXMge1xyXG4gIHBhZGRpbmc6IDNweDtcclxuICBib3JkZXItcmFkaXVzOiA1cHg7XHJcbiAgZm9udC1zaXplOiAxNnB4O1xyXG4gIGNvbG9yOiAjMzMzO1xyXG59XHJcblxyXG5maWd1cmUge1xyXG4gIGhlaWdodDogMjBweDtcclxuICB3aWR0aDogMTAwJTtcclxuICBiYWNrZ3JvdW5kOiBzYWxtb247XHJcbn0iXX0= */"
+module.exports = "div.info-card {\n  position: fixed;\n  bottom: -1000px;\n  transition: all .2s ease-in-out;\n  width: 100%; }\n  div.info-card .card-content {\n    max-width: 400px;\n    margin: 0 auto; }\n  div.info-card.show {\n    bottom: 0px; }\n  .title {\n  margin-bottom: 5px; }\n  .green {\n  background: lightgreen; }\n  .red {\n  background: salmon; }\n  .location-status {\n  padding: 3px;\n  border-radius: 5px;\n  font-size: 16px;\n  color: #333; }\n  figure {\n  height: 20px;\n  width: 100%;\n  background: salmon; }\n  .fave-btn {\n  position: absolute;\n  right: 10%;\n  top: 20px; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9pbmZvL2luZm8uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxlQUFlO0VBQ2YsZUFBZTtFQUNmLCtCQUErQjtFQUMvQixXQUFXLEVBQUE7RUFKYjtJQU1JLGdCQUFnQjtJQUNoQixjQUFjLEVBQUE7RUFQbEI7SUFVSSxXQUFXLEVBQUE7RUFJZjtFQUNFLGtCQUFrQixFQUFBO0VBR3BCO0VBQ0Usc0JBQXNCLEVBQUE7RUFHeEI7RUFDRSxrQkFBa0IsRUFBQTtFQUdwQjtFQUNFLFlBQVk7RUFDWixrQkFBa0I7RUFDbEIsZUFBZTtFQUNmLFdBQVcsRUFBQTtFQUdiO0VBQ0UsWUFBWTtFQUNaLFdBQVc7RUFDWCxrQkFBa0IsRUFBQTtFQUdwQjtFQUNFLGtCQUFrQjtFQUNsQixVQUFVO0VBQ1YsU0FBUyxFQUFBIiwiZmlsZSI6InNyYy9hcHAvY29tcG9uZW50cy9pbmZvL2luZm8uY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJkaXYuaW5mby1jYXJkIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBib3R0b206IC0xMDAwcHg7XG4gIHRyYW5zaXRpb246IGFsbCAuMnMgZWFzZS1pbi1vdXQ7XG4gIHdpZHRoOiAxMDAlO1xuICAuY2FyZC1jb250ZW50IHtcbiAgICBtYXgtd2lkdGg6IDQwMHB4O1xuICAgIG1hcmdpbjogMCBhdXRvO1xuICB9XG4gICYuc2hvdyB7XG4gICAgYm90dG9tOiAwcHg7XG4gIH1cbn1cblxuLnRpdGxlIHtcbiAgbWFyZ2luLWJvdHRvbTogNXB4O1xufVxuXG4uZ3JlZW4ge1xuICBiYWNrZ3JvdW5kOiBsaWdodGdyZWVuO1xufVxuXG4ucmVkIHtcbiAgYmFja2dyb3VuZDogc2FsbW9uO1xufVxuXG4ubG9jYXRpb24tc3RhdHVzIHtcbiAgcGFkZGluZzogM3B4O1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIGZvbnQtc2l6ZTogMTZweDtcbiAgY29sb3I6ICMzMzM7XG59XG5cbmZpZ3VyZSB7XG4gIGhlaWdodDogMjBweDtcbiAgd2lkdGg6IDEwMCU7XG4gIGJhY2tncm91bmQ6IHNhbG1vbjtcbn1cblxuLmZhdmUtYnRuIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICByaWdodDogMTAlO1xuICB0b3A6IDIwcHg7XG59XG4iXX0= */"
 
 /***/ }),
 
@@ -210,12 +295,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InfoComponent", function() { return InfoComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var src_app_services_storage_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/storage.service */ "./src/app/services/storage.service.ts");
+
 
 
 var InfoComponent = /** @class */ (function () {
-    function InfoComponent() {
+    function InfoComponent(storage) {
+        this.storage = storage;
+        this.faveLocation = false;
     }
+    // TODO: set up the observables here
     InfoComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.storage.faves.subscribe(function (faves) {
+            _this.favesList = faves;
+            _this.checkIfFave();
+        });
+    };
+    InfoComponent.prototype.ngAfterContentChecked = function () {
+        var _this = this;
+        this.storage.faves.subscribe(function (faves) {
+            _this.favesList = faves;
+            _this.checkIfFave();
+        });
+    };
+    InfoComponent.prototype.ngAfterViewInit = function () {
+        this.checkIfFave();
+    };
+    InfoComponent.prototype.onFaveBtnClick = function () {
+        this.location.fave = !this.location.fave;
+        this.storage.storeFavourite(this.location);
+    };
+    InfoComponent.prototype.onFaveRemoveClick = function () {
+        this.location.fave = !this.location.fave;
+        this.storage.removeFavourite(this.location);
+    };
+    InfoComponent.prototype.checkIfFave = function () {
+        if (this.favesList && this.location) {
+            this.faveLocation = this.favesList.indexOf(this.location.number) >= 0;
+        }
     };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
@@ -227,7 +345,7 @@ var InfoComponent = /** @class */ (function () {
             template: __webpack_require__(/*! ./info.component.html */ "./src/app/components/info/info.component.html"),
             styles: [__webpack_require__(/*! ./info.component.scss */ "./src/app/components/info/info.component.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_storage_service__WEBPACK_IMPORTED_MODULE_2__["StorageService"]])
     ], InfoComponent);
     return InfoComponent;
 }());
@@ -243,7 +361,7 @@ var InfoComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"location.coords\">\r\n  <agm-map [latitude]=\"lat\" [longitude]=\"lng\" [zoom]=\"16\" [usePanning]=\"true\" (mapClick)=\"mapClick($event)\"\r\n    (mapReady)=\"mapReady($event)\" (idle)=\"mapIdle($event)\">\r\n    <agm-marker [latitude]=\"location.coords.latitude\" [longitude]=\"location.coords.longitude\">\r\n    </agm-marker>\r\n    <agm-marker *ngFor=\"let loc of locations; let i = index;\" [latitude]=\"loc.position.lat\"\r\n      [longitude]=\"loc.position.lng\" (markerClick)=\"markerClick($event, loc)\"\r\n      [iconUrl]=\"'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bbT|' + loc.available_bikes + ' / ' + loc.available_bike_stands + '|' + (loc.available_bikes > 3 ? '90ee90' : 'fa8072') + '|222222|'\">\r\n    </agm-marker>\r\n  </agm-map>\r\n</div>\r\n\r\n<app-info [location]=\"selectedLocation\"></app-info>"
+module.exports = "<div *ngIf=\"location.coords\">\n  <agm-map [latitude]=\"lat\" [longitude]=\"lng\" [zoom]=\"16\" [usePanning]=\"true\" (mapClick)=\"mapClick($event)\"\n    (mapReady)=\"mapReady($event)\" (idle)=\"mapIdle($event)\">\n    <agm-marker [latitude]=\"location.coords.latitude\" [longitude]=\"location.coords.longitude\">\n    </agm-marker>\n    <agm-marker *ngFor=\"let loc of locations; let i = index;\" [latitude]=\"loc.position.lat\"\n      [longitude]=\"loc.position.lng\" (markerClick)=\"markerClick($event, loc)\"\n      [iconUrl]=\"'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bbT|' + loc.available_bikes + ' / ' + loc.available_bike_stands + '|' + (loc.available_bikes > 3 ? '29c929' : 'd26559') + '|' + (favesList.indexOf(loc.number) >= 0 ? 'ffff00' : '222222') + '|'\">\n    </agm-marker>\n  </agm-map>\n</div>\n\n<button (click)=\"toggleFaveList()\" class=\"fave-menu-btn button is-primary is-rounded\"> &lt;3 </button>\n<app-info [location]=\"selectedLocation\"></app-info>\n<app-favourites></app-favourites>"
 
 /***/ }),
 
@@ -254,7 +372,7 @@ module.exports = "<div *ngIf=\"location.coords\">\r\n  <agm-map [latitude]=\"lat
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "agm-map {\n  margin-top: 52px;\n  height: calc(100vh - 52px); }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvY29tcG9uZW50cy9tYXAvQzpcXFVzZXJzXFxnYXZoYVxcRGVza3RvcFxccGVyc29uYWxfcHJvamVjdHNcXGR1Ymxpbi1iaWtlcy1uZy9zcmNcXGFwcFxcY29tcG9uZW50c1xcbWFwXFxtYXAuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxnQkFBZ0I7RUFDaEIsMEJBQTBCLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9jb21wb25lbnRzL21hcC9tYXAuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJhZ20tbWFwIHtcclxuICBtYXJnaW4tdG9wOiA1MnB4O1xyXG4gIGhlaWdodDogY2FsYygxMDB2aCAtIDUycHgpO1xyXG59Il19 */"
+module.exports = "agm-map {\n  margin-top: 52px;\n  height: calc(100vh - 52px); }\n\napp-favourites {\n  z-index: 1000;\n  position: absolute;\n  background: white;\n  width: 90%;\n  right: -100vw;\n  top: 52px;\n  height: calc(100vh - 52px);\n  transition: all .2s ease-in-out; }\n\napp-favourites.open {\n    right: 0; }\n\n.fave-menu-btn {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n  z-index: 2000; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9tYXAvbWFwLmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0UsZ0JBQWdCO0VBQ2hCLDBCQUEwQixFQUFBOztBQUc1QjtFQUNFLGFBQWE7RUFDYixrQkFBa0I7RUFDbEIsaUJBQWlCO0VBQ2pCLFVBQVM7RUFDVCxhQUFhO0VBQ2IsU0FBUztFQUNULDBCQUEwQjtFQUMxQiwrQkFBK0IsRUFBQTs7QUFSakM7SUFVSSxRQUFRLEVBQUE7O0FBSVo7RUFDRSxrQkFBa0I7RUFDbEIsU0FBUztFQUNULFdBQVc7RUFDWCxhQUFhLEVBQUEiLCJmaWxlIjoic3JjL2FwcC9jb21wb25lbnRzL21hcC9tYXAuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJhZ20tbWFwIHtcbiAgbWFyZ2luLXRvcDogNTJweDtcbiAgaGVpZ2h0OiBjYWxjKDEwMHZoIC0gNTJweCk7XG59XG5cbmFwcC1mYXZvdXJpdGVzIHtcbiAgei1pbmRleDogMTAwMDtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICBiYWNrZ3JvdW5kOiB3aGl0ZTtcbiAgd2lkdGg6OTAlO1xuICByaWdodDogLTEwMHZ3O1xuICB0b3A6IDUycHg7XG4gIGhlaWdodDogY2FsYygxMDB2aCAtIDUycHgpO1xuICB0cmFuc2l0aW9uOiBhbGwgLjJzIGVhc2UtaW4tb3V0O1xuICAmLm9wZW4ge1xuICAgIHJpZ2h0OiAwO1xuICB9XG59XG5cbi5mYXZlLW1lbnUtYnRuICB7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgdG9wOiAxMHB4O1xuICByaWdodDogMTBweDtcbiAgei1pbmRleDogMjAwMDtcbn0iXX0= */"
 
 /***/ }),
 
@@ -271,16 +389,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var src_app_services_bikes_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/bikes.service */ "./src/app/services/bikes.service.ts");
+/* harmony import */ var src_app_services_storage_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/storage.service */ "./src/app/services/storage.service.ts");
+/* harmony import */ var _favourites_favourites_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../favourites/favourites.component */ "./src/app/components/favourites/favourites.component.ts");
+
+
 
 
 
 var MapComponent = /** @class */ (function () {
-    function MapComponent(bikes) {
+    function MapComponent(bikes, storage) {
         this.bikes = bikes;
+        this.storage = storage;
         this.location = {};
     }
     MapComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.bikes.getLocations().subscribe(function (locations) {
+            _this.storage.storeLocations(locations);
+        });
+        this.storage.locations.subscribe(function (l) { return _this.locations = l; });
         if (navigator.geolocation) {
             navigator.geolocation.watchPosition(function (pos) {
                 _this.location = pos;
@@ -292,19 +419,16 @@ var MapComponent = /** @class */ (function () {
         else {
             console.log('no navigator');
         }
-        this.bikes.getLocations().subscribe(function (locations) {
-            _this.locations = locations;
-            var locals = _this.locations.map(function (l) {
-                l.lat = +l.position.lat;
-                l.lng = +l.position.lng;
-                return l;
-            });
-            _this.locations = locals;
-            //console.log(this.locations);
+        this.storage.faves.subscribe(function (faves) {
+            _this.favesList = faves;
         });
     };
     MapComponent.prototype.formatMarker = function (loc) {
         return loc.available_bikes.toString() + " / " + loc.available_bike_stands.toString();
+    };
+    MapComponent.prototype.toggleFaveList = function () {
+        // @ts-ignore
+        this.favesEl.nativeElement.classList.toggle('open');
     };
     MapComponent.prototype.markerClick = function (e, location) {
         console.log(e);
@@ -321,13 +445,18 @@ var MapComponent = /** @class */ (function () {
     MapComponent.prototype.mapIdle = function (e) {
         console.log('mapIdle', e);
     };
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])(_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_4__["FavouritesComponent"], { read: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ElementRef"] }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _favourites_favourites_component__WEBPACK_IMPORTED_MODULE_4__["FavouritesComponent"])
+    ], MapComponent.prototype, "favesEl", void 0);
     MapComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-map',
             template: __webpack_require__(/*! ./map.component.html */ "./src/app/components/map/map.component.html"),
             styles: [__webpack_require__(/*! ./map.component.scss */ "./src/app/components/map/map.component.scss")]
         }),
-        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_bikes_service__WEBPACK_IMPORTED_MODULE_2__["BikesService"]])
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [src_app_services_bikes_service__WEBPACK_IMPORTED_MODULE_2__["BikesService"],
+            src_app_services_storage_service__WEBPACK_IMPORTED_MODULE_3__["StorageService"]])
     ], MapComponent);
     return MapComponent;
 }());
@@ -343,7 +472,7 @@ var MapComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navbar\" role=\"navigation\" aria-label=\"main navigation\">\r\n  <div class=\"navbar-brand\">\r\n    <a class=\"navbar-item\" routerLink=\"/\">\r\n      <span>dBikes</span>\r\n    </a>\r\n\r\n    <a (click)=\"toggleNav()\" #navBurger role=\"button\" class=\"navbar-burger burger\" aria-label=\"menu\"\r\n      aria-expanded=\"false\" data-target=\"navbarBasicExample\">\r\n      <span aria-hidden=\"true\"></span>\r\n      <span aria-hidden=\"true\"></span>\r\n      <span aria-hidden=\"true\"></span>\r\n    </a>\r\n  </div>\r\n\r\n  <div id=\"navbarBasicExample\" #navMenu class=\"navbar-menu\">\r\n    <div class=\"navbar-start\">\r\n      <a class=\"navbar-item\">\r\n        Home\r\n      </a>\r\n\r\n      <a class=\"navbar-item\">\r\n        Documentation\r\n      </a>\r\n\r\n\r\n    </div>\r\n\r\n    <div class=\"navbar-end\">\r\n      <div class=\"navbar-item\">\r\n        <div class=\"buttons\">\r\n          <a class=\"button is-primary\">\r\n            <strong>Sign up</strong>\r\n          </a>\r\n          <a class=\"button is-light\">\r\n            Log in\r\n          </a>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  </div>\r\n</nav>"
+module.exports = "<nav class=\"navbar\" role=\"navigation\" aria-label=\"main navigation\">\n  <div class=\"navbar-brand\">\n    <a class=\"navbar-item\" routerLink=\"/\">\n      <img src=\"../../../assets/img/dbikes-logo.svg\" alt=\"\">\n      <span> dbikes</span>\n    </a>\n  </div>  \n</nav>"
 
 /***/ }),
 
@@ -404,6 +533,74 @@ var NavbarComponent = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./src/app/components/percentbar/percentbar.component.html":
+/*!*****************************************************************!*\
+  !*** ./src/app/components/percentbar/percentbar.component.html ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<figure [ngStyle]=\"{'height': ' ' + (h) + 'px'}\">\n  <div style=\"background: lightgreen;\"\n    [ngStyle]=\"{'height': ' ' + (h) + 'px' ,'width': ' '+ (bikes / stands * 100) + '%'}\"></div>\n</figure>"
+
+/***/ }),
+
+/***/ "./src/app/components/percentbar/percentbar.component.scss":
+/*!*****************************************************************!*\
+  !*** ./src/app/components/percentbar/percentbar.component.scss ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "figure {\n  height: 20px;\n  width: 100%;\n  background: salmon; }\n\n.green {\n  background: lightgreen; }\n\n.red {\n  background: salmon; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9wZXJjZW50YmFyL3BlcmNlbnRiYXIuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxZQUFZO0VBQ1osV0FBVztFQUNYLGtCQUFrQixFQUFBOztBQUd0QjtFQUNJLHNCQUFzQixFQUFBOztBQUd4QjtFQUNFLGtCQUFrQixFQUFBIiwiZmlsZSI6InNyYy9hcHAvY29tcG9uZW50cy9wZXJjZW50YmFyL3BlcmNlbnRiYXIuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJmaWd1cmUge1xuICAgIGhlaWdodDogMjBweDtcbiAgICB3aWR0aDogMTAwJTtcbiAgICBiYWNrZ3JvdW5kOiBzYWxtb247XG59XG5cbi5ncmVlbiB7XG4gICAgYmFja2dyb3VuZDogbGlnaHRncmVlbjtcbiAgfVxuICBcbiAgLnJlZCB7XG4gICAgYmFja2dyb3VuZDogc2FsbW9uO1xuICB9Il19 */"
+
+/***/ }),
+
+/***/ "./src/app/components/percentbar/percentbar.component.ts":
+/*!***************************************************************!*\
+  !*** ./src/app/components/percentbar/percentbar.component.ts ***!
+  \***************************************************************/
+/*! exports provided: PercentbarComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "PercentbarComponent", function() { return PercentbarComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+
+
+var PercentbarComponent = /** @class */ (function () {
+    function PercentbarComponent() {
+    }
+    PercentbarComponent.prototype.ngOnInit = function () {
+    };
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], PercentbarComponent.prototype, "bikes", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], PercentbarComponent.prototype, "stands", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Object)
+    ], PercentbarComponent.prototype, "h", void 0);
+    PercentbarComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+            selector: 'app-percentbar',
+            template: __webpack_require__(/*! ./percentbar.component.html */ "./src/app/components/percentbar/percentbar.component.html"),
+            styles: [__webpack_require__(/*! ./percentbar.component.scss */ "./src/app/components/percentbar/percentbar.component.scss")]
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+    ], PercentbarComponent);
+    return PercentbarComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./src/app/services/bikes.service.ts":
 /*!*******************************************!*\
   !*** ./src/app/services/bikes.service.ts ***!
@@ -436,6 +633,80 @@ var BikesService = /** @class */ (function () {
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"]])
     ], BikesService);
     return BikesService;
+}());
+
+
+
+/***/ }),
+
+/***/ "./src/app/services/storage.service.ts":
+/*!*********************************************!*\
+  !*** ./src/app/services/storage.service.ts ***!
+  \*********************************************/
+/*! exports provided: StorageService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "StorageService", function() { return StorageService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+
+
+
+var StorageService = /** @class */ (function () {
+    function StorageService() {
+        this.favesSource = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"](JSON.parse(localStorage.getItem('faves')) || []);
+        this.faves = this.favesSource.asObservable();
+        this.locationsSource = new rxjs__WEBPACK_IMPORTED_MODULE_2__["BehaviorSubject"](JSON.parse(localStorage.getItem('locations')) || []);
+        this.locations = this.locationsSource.asObservable();
+    }
+    StorageService.prototype.storeLocations = function (locations) {
+        var savedFaves = localStorage.getItem('faves');
+        var addFave = locations.map(function (l) {
+            l.fave = savedFaves.indexOf(l.number) >= 0 ? true : false;
+            return l;
+        });
+        localStorage.setItem('locations', JSON.stringify(addFave));
+        this.locationsSource.next(addFave);
+    };
+    StorageService.prototype.getStoredLocations = function () {
+        this.locationsSource.next(JSON.parse(localStorage.getItem('locations')));
+    };
+    StorageService.prototype.storeFavourite = function (location) {
+        if (!localStorage.getItem('faves'))
+            localStorage.setItem('faves', '[]');
+        var faves = JSON.parse(localStorage.getItem('faves'));
+        var locations = JSON.parse(localStorage.getItem('locations'));
+        if (faves.indexOf(location.number) < 0) {
+            faves.push(location.number);
+            localStorage.setItem('faves', JSON.stringify(faves));
+            this.storeLocations(locations);
+            this.favesSource.next(faves);
+        }
+    };
+    StorageService.prototype.getFavourites = function () {
+        this.favesSource.next(JSON.parse(localStorage.getItem('faves')));
+    };
+    StorageService.prototype.removeFavourite = function (location) {
+        var locations = JSON.parse(localStorage.getItem('locations'));
+        var faves = JSON.parse(localStorage.getItem('faves'));
+        if (faves.indexOf(location.number >= 0)) {
+            console.log(faves, location.number);
+            var newFaves = faves.filter(function (n) { return n != location.number; });
+            localStorage.setItem('faves', JSON.stringify(newFaves));
+            this.storeLocations(locations);
+            this.favesSource.next(newFaves);
+        }
+    };
+    StorageService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+            providedIn: 'root'
+        }),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:paramtypes", [])
+    ], StorageService);
+    return StorageService;
 }());
 
 
@@ -505,7 +776,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\gavha\Desktop\personal_projects\dublin-bikes-ng\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! /Users/admin/Desktop/dev/personal-projects/dublin-bikes/ng-dbikes/src/main.ts */"./src/main.ts");
 
 
 /***/ })
