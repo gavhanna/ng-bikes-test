@@ -137,11 +137,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm5/http.js");
 /* harmony import */ var _agm_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @agm/core */ "./node_modules/@agm/core/index.js");
 /* harmony import */ var _components_map_map_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/map/map.component */ "./src/app/components/map/map.component.ts");
-/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./../environments/environment */ "./src/environments/environment.ts");
-/* harmony import */ var _components_info_info_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/info/info.component */ "./src/app/components/info/info.component.ts");
-/* harmony import */ var _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/navbar/navbar.component */ "./src/app/components/navbar/navbar.component.ts");
-/* harmony import */ var _components_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/favourites/favourites.component */ "./src/app/components/favourites/favourites.component.ts");
-/* harmony import */ var _components_percentbar_percentbar_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/percentbar/percentbar.component */ "./src/app/components/percentbar/percentbar.component.ts");
+/* harmony import */ var _agm_js_marker_clusterer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @agm/js-marker-clusterer */ "./node_modules/@agm/js-marker-clusterer/index.js");
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./../environments/environment */ "./src/environments/environment.ts");
+/* harmony import */ var _components_info_info_component__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/info/info.component */ "./src/app/components/info/info.component.ts");
+/* harmony import */ var _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/navbar/navbar.component */ "./src/app/components/navbar/navbar.component.ts");
+/* harmony import */ var _components_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./components/favourites/favourites.component */ "./src/app/components/favourites/favourites.component.ts");
+/* harmony import */ var _components_percentbar_percentbar_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./components/percentbar/percentbar.component */ "./src/app/components/percentbar/percentbar.component.ts");
+
 
 
 
@@ -163,18 +165,19 @@ var AppModule = /** @class */ (function () {
             declarations: [
                 _app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"],
                 _components_map_map_component__WEBPACK_IMPORTED_MODULE_7__["MapComponent"],
-                _components_info_info_component__WEBPACK_IMPORTED_MODULE_9__["InfoComponent"],
-                _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_10__["NavbarComponent"],
-                _components_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_11__["FavouritesComponent"],
-                _components_percentbar_percentbar_component__WEBPACK_IMPORTED_MODULE_12__["PercentbarComponent"]
+                _components_info_info_component__WEBPACK_IMPORTED_MODULE_10__["InfoComponent"],
+                _components_navbar_navbar_component__WEBPACK_IMPORTED_MODULE_11__["NavbarComponent"],
+                _components_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_12__["FavouritesComponent"],
+                _components_percentbar_percentbar_component__WEBPACK_IMPORTED_MODULE_13__["PercentbarComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_1__["BrowserModule"],
                 _app_routing_module__WEBPACK_IMPORTED_MODULE_3__["AppRoutingModule"],
                 _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClientModule"],
                 _agm_core__WEBPACK_IMPORTED_MODULE_6__["AgmCoreModule"].forRoot({
-                    apiKey: _environments_environment__WEBPACK_IMPORTED_MODULE_8__["environment"].mapsApiKey
-                })
+                    apiKey: _environments_environment__WEBPACK_IMPORTED_MODULE_9__["environment"].mapsApiKey
+                }),
+                _agm_js_marker_clusterer__WEBPACK_IMPORTED_MODULE_8__["AgmJsMarkerClustererModule"]
             ],
             providers: [],
             bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_4__["AppComponent"]]
@@ -194,7 +197,7 @@ var AppModule = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n  <section class=\"section\">\n    <div class=\"columns is-centered\">\n        <h3 class=\"is-centered\" *ngIf=\"faves.length < 1\">No favourites saved yet!</h3>\n        <div *ngIf=\"faves.length >= 1\" class=\"column is-narrow\">\n            <h2 class=\"title\">Favourites</h2>\n            <table class=\"table\">\n                <thead>\n                    <tr>\n                        <td>Address</td>\n                        <td>Bikes</td>\n                        <td>Spaces</td>\n                        <td>&nbsp;</td>\n                    </tr>\n                </thead>\n                <tbody>\n                    <ng-container *ngFor=\"let f of faves\">\n                        <tr>\n                            <td>{{ f.address }}</td>\n                            <td>{{ f.available_bikes }}</td>\n                            <td>{{ f.available_bike_stands }}</td>\n                            <td><button (click)=\"removeFave(f)\" class=\"button is-rounded is-danger remove-fave-btn\">x</button></td>\n                        </tr>\n                        <tr>\n                            <td colspan=\"4\">\n                                <span class=\"infobar-row\">\n                                    <app-percentbar [h]=\"10\" [bikes]=\"f.available_bikes\" [stands]=\"f.bike_stands\"></app-percentbar>\n                                </span>\n                            </td>\n                        </tr>\n                    </ng-container>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</section>"
+module.exports = "\n  <section class=\"section\">\n    <div class=\"columns is-centered\">\n        <h3 class=\"is-centered\" *ngIf=\"faves.length < 1\">No favourites saved yet!</h3>\n        <div *ngIf=\"faves.length >= 1\" class=\"column is-narrow\">\n            <h2 class=\"title\">Favourites</h2>\n            <table class=\"table\">\n                <thead>\n                    <tr>\n                        <td>Address</td>\n                        <td>Status</td>\n                        <td>Card</td>\n                        <td>Bikes</td>\n                        <td>Spaces</td>\n                        <td>&nbsp;</td>\n                    </tr>\n                </thead>\n                <tbody>\n                    <ng-container *ngFor=\"let f of faves\">\n                        <tr>\n                            <td (click)=\"sendPanToLocation(f)\" class=\"location-address\">{{ f.address }}</td>\n                            <td>{{ f.status }}</td>\n                            <td><i class=\"fas fa-thumbs-{{f.banking ? 'up' : 'down'}}\"></i></td>\n                            <td>{{ f.available_bikes }}</td>\n                            <td>{{ f.available_bike_stands }}</td>\n                            <td><span (click)=\"removeFave(f)\" class=\"remove-fave-btn\"><i class=\"far fa-trash-alt\"></i></span></td>\n                        </tr>\n                        <tr>\n                            <td colspan=\"6\">\n                                <span class=\"infobar-row\">\n                                    <app-percentbar [h]=\"3\" [bikes]=\"f.available_bikes\" [stands]=\"f.bike_stands\"></app-percentbar>\n                                </span>\n                            </td>\n                        </tr>\n                    </ng-container>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</section>"
 
 /***/ }),
 
@@ -205,7 +208,7 @@ module.exports = "\n  <section class=\"section\">\n    <div class=\"columns is-c
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".remove-fave-btn {\n  position: relative;\n  top: -5px; }\n\n.infobar-row {\n  position: relative;\n  top: -18px; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9mYXZvdXJpdGVzL2Zhdm91cml0ZXMuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxrQkFBa0I7RUFDbEIsU0FBUyxFQUFBOztBQUdiO0VBQ0ksa0JBQWtCO0VBQ2xCLFVBQVUsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvZmF2b3VyaXRlcy9mYXZvdXJpdGVzLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLnJlbW92ZS1mYXZlLWJ0biB7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIHRvcDogLTVweDtcbn1cblxuLmluZm9iYXItcm93IHtcbiAgICBwb3NpdGlvbjogcmVsYXRpdmU7XG4gICAgdG9wOiAtMThweDtcbn0iXX0= */"
+module.exports = ".remove-fave-btn {\n  padding: 5px;\n  border-radius: 50%;\n  cursor: pointer;\n  transition: all .2s ease-in-out; }\n  .remove-fave-btn:hover {\n    color: salmon; }\n  .infobar-row {\n  position: relative;\n  top: -13px; }\n  .table td {\n  border: none;\n  height: 20px; }\n  .fa-thumbs-up {\n  color: lightgreen; }\n  .fa-thumbs-down {\n  color: salmon; }\n  .location-address {\n  cursor: pointer; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9mYXZvdXJpdGVzL2Zhdm91cml0ZXMuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxZQUFZO0VBQ1osa0JBQWtCO0VBQ2xCLGVBQWU7RUFDZiwrQkFBK0IsRUFBQTtFQUpuQztJQU1RLGFBQWEsRUFBQTtFQUlyQjtFQUNJLGtCQUFrQjtFQUNsQixVQUFVLEVBQUE7RUFHZDtFQUNJLFlBQVk7RUFDWixZQUFZLEVBQUE7RUFHaEI7RUFDSSxpQkFBaUIsRUFBQTtFQUdyQjtFQUNJLGFBQWEsRUFBQTtFQUdqQjtFQUNJLGVBQWUsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvZmF2b3VyaXRlcy9mYXZvdXJpdGVzLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLnJlbW92ZS1mYXZlLWJ0biB7XG4gICAgcGFkZGluZzogNXB4O1xuICAgIGJvcmRlci1yYWRpdXM6IDUwJTtcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgdHJhbnNpdGlvbjogYWxsIC4ycyBlYXNlLWluLW91dDtcbiAgICAmOmhvdmVyIHtcbiAgICAgICAgY29sb3I6IHNhbG1vbjtcbiAgICB9XG59XG5cbi5pbmZvYmFyLXJvdyB7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIHRvcDogLTEzcHg7XG59XG5cbi50YWJsZSB0ZCB7XG4gICAgYm9yZGVyOiBub25lO1xuICAgIGhlaWdodDogMjBweDtcbn1cblxuLmZhLXRodW1icy11cCB7XG4gICAgY29sb3I6IGxpZ2h0Z3JlZW47XG59XG5cbi5mYS10aHVtYnMtZG93biB7XG4gICAgY29sb3I6IHNhbG1vbjtcbn1cblxuLmxvY2F0aW9uLWFkZHJlc3Mge1xuICAgIGN1cnNvcjogcG9pbnRlcjtcbn0iXX0= */"
 
 /***/ }),
 
@@ -229,6 +232,7 @@ var FavouritesComponent = /** @class */ (function () {
     function FavouritesComponent(storage) {
         this.storage = storage;
         this.favesList = [];
+        this.notifyMap = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
     }
     FavouritesComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -242,10 +246,18 @@ var FavouritesComponent = /** @class */ (function () {
             _this.faves = locations.filter(function (l) { return _this.favesList.indexOf(l.number) >= 0; });
         });
     };
+    FavouritesComponent.prototype.sendPanToLocation = function (location) {
+        // console.log(location);
+        this.notifyMap.emit(location);
+    };
     FavouritesComponent.prototype.removeFave = function (l) {
         if (confirm("Remove from favourites?"))
             this.storage.removeFavourite(l);
     };
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Output"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"])
+    ], FavouritesComponent.prototype, "notifyMap", void 0);
     FavouritesComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-favourites',
@@ -268,7 +280,7 @@ var FavouritesComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"location\" [ngClass]=\"{'show': location?.number}\" class=\"card info-card\">\n  <div class=\"card-content\">\n    <div class=\"media\">\n      <div class=\"media-content has-text-centered\">\n        <p class=\"title is-4\">{{location.address}}</p>\n        <span><span class=\"location-status\" [ngClass]=\"{'green': location.status === 'OPEN'}\">{{location.status}}</span>\n        </span>\n        <p class=\"subtitle is-6\">\n          <time datetime=\"2016-1-1\">Last updated: {{location.last_update | date: 'h:mm a'}}</time>\n        </p>\n      </div>\n    </div>\n    <a *ngIf=\"!location.fave\" (click)=\"onFaveBtnClick()\" class=\"button is-rounded fave-btn\"><3</a>\n    <a *ngIf=\"location.fave\" (click)=\"onFaveRemoveClick()\" class=\"button is-rounded fave-btn is-warning\"><3</a>\n    <div class=\"level\">\n      <div class=\"level-item has-text-centered\">\n        <div>\n          <p class=\"heading\">Bikes</p>\n          <p class=\"title\">{{location.available_bikes}}</p>\n        </div>\n      </div>\n      <div class=\"level-item has-text-centered\">\n        <div>\n          <p class=\"heading\">Spaces</p>\n          <p class=\"title\">{{location.available_bike_stands}}</p>\n        </div>\n      </div>\n    </div>\n    <app-percentbar [h]=\"20\" [bikes]=\"location.available_bikes\" [stands]=\"location.bike_stands\"></app-percentbar>\n  </div>\n</div>"
+module.exports = "<div *ngIf=\"location\" [ngClass]=\"{'show': location?.number}\" class=\"card info-card\">\n  <div class=\"card-content\">\n    <div class=\"media\">\n      <div class=\"media-content has-text-centered\">\n        <p (click)=\"sendPanToLocation()\" class=\"title is-4\">{{location.address}}</p>\n        <span>\n          <span class=\"location-status\" [ngClass]=\"{'green': location.status === 'OPEN', 'red': location.status !== 'OPEN'}\">{{location.status}}</span>\n          <span class=\"location-status\" [ngClass]=\"{'green': location.banking, 'red': !location.banking}\">{{ location.banking ? 'CARD' : 'CARD' }}</span>\n        </span>\n        <p class=\"subtitle is-6\">\n          <time datetime=\"2016-1-1\">Last updated: {{location.last_update | date: 'h:mm a'}}</time>\n        </p>\n      </div>\n    </div>\n    <a *ngIf=\"!location.fave\" (click)=\"onFaveBtnClick()\" class=\"fave-btn button is-rounded fave-btn\"><i class=\"far fa-heart\"></i></a>\n    <a *ngIf=\"location.fave\" (click)=\"onFaveRemoveClick()\" class=\"fave-btn button is-rounded fave-btn is-warning\"><i class=\"fas fa-heart\"></i></a>\n    <div class=\"level\">\n      <div class=\"level-item has-text-centered\">\n        <div>\n          <p class=\"heading\">Bikes</p>\n          <p class=\"title\">{{location.available_bikes}}</p>\n        </div>\n      </div>\n      <div class=\"level-item has-text-centered\">\n        <div>\n          <p class=\"heading\">Spaces</p>\n          <p class=\"title\">{{location.available_bike_stands}}</p>\n        </div>\n      </div>\n    </div>\n    <app-percentbar [h]=\"20\" [bikes]=\"location.available_bikes\" [stands]=\"location.bike_stands\"></app-percentbar>\n  </div>\n</div>"
 
 /***/ }),
 
@@ -279,7 +291,7 @@ module.exports = "<div *ngIf=\"location\" [ngClass]=\"{'show': location?.number}
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "div.info-card {\n  position: fixed;\n  bottom: -1000px;\n  transition: all .2s ease-in-out;\n  width: 100%; }\n  div.info-card .card-content {\n    max-width: 400px;\n    margin: 0 auto; }\n  div.info-card.show {\n    bottom: 0px; }\n  .title {\n  margin-bottom: 5px; }\n  .green {\n  background: lightgreen; }\n  .red {\n  background: salmon; }\n  .location-status {\n  padding: 3px;\n  border-radius: 5px;\n  font-size: 16px;\n  color: #333; }\n  figure {\n  height: 20px;\n  width: 100%;\n  background: salmon; }\n  .fave-btn {\n  position: absolute;\n  right: 10%;\n  top: 20px; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9pbmZvL2luZm8uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxlQUFlO0VBQ2YsZUFBZTtFQUNmLCtCQUErQjtFQUMvQixXQUFXLEVBQUE7RUFKYjtJQU1JLGdCQUFnQjtJQUNoQixjQUFjLEVBQUE7RUFQbEI7SUFVSSxXQUFXLEVBQUE7RUFJZjtFQUNFLGtCQUFrQixFQUFBO0VBR3BCO0VBQ0Usc0JBQXNCLEVBQUE7RUFHeEI7RUFDRSxrQkFBa0IsRUFBQTtFQUdwQjtFQUNFLFlBQVk7RUFDWixrQkFBa0I7RUFDbEIsZUFBZTtFQUNmLFdBQVcsRUFBQTtFQUdiO0VBQ0UsWUFBWTtFQUNaLFdBQVc7RUFDWCxrQkFBa0IsRUFBQTtFQUdwQjtFQUNFLGtCQUFrQjtFQUNsQixVQUFVO0VBQ1YsU0FBUyxFQUFBIiwiZmlsZSI6InNyYy9hcHAvY29tcG9uZW50cy9pbmZvL2luZm8uY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJkaXYuaW5mby1jYXJkIHtcbiAgcG9zaXRpb246IGZpeGVkO1xuICBib3R0b206IC0xMDAwcHg7XG4gIHRyYW5zaXRpb246IGFsbCAuMnMgZWFzZS1pbi1vdXQ7XG4gIHdpZHRoOiAxMDAlO1xuICAuY2FyZC1jb250ZW50IHtcbiAgICBtYXgtd2lkdGg6IDQwMHB4O1xuICAgIG1hcmdpbjogMCBhdXRvO1xuICB9XG4gICYuc2hvdyB7XG4gICAgYm90dG9tOiAwcHg7XG4gIH1cbn1cblxuLnRpdGxlIHtcbiAgbWFyZ2luLWJvdHRvbTogNXB4O1xufVxuXG4uZ3JlZW4ge1xuICBiYWNrZ3JvdW5kOiBsaWdodGdyZWVuO1xufVxuXG4ucmVkIHtcbiAgYmFja2dyb3VuZDogc2FsbW9uO1xufVxuXG4ubG9jYXRpb24tc3RhdHVzIHtcbiAgcGFkZGluZzogM3B4O1xuICBib3JkZXItcmFkaXVzOiA1cHg7XG4gIGZvbnQtc2l6ZTogMTZweDtcbiAgY29sb3I6ICMzMzM7XG59XG5cbmZpZ3VyZSB7XG4gIGhlaWdodDogMjBweDtcbiAgd2lkdGg6IDEwMCU7XG4gIGJhY2tncm91bmQ6IHNhbG1vbjtcbn1cblxuLmZhdmUtYnRuIHtcbiAgcG9zaXRpb246IGFic29sdXRlO1xuICByaWdodDogMTAlO1xuICB0b3A6IDIwcHg7XG59XG4iXX0= */"
+module.exports = "div.info-card {\n  position: fixed;\n  bottom: -1000px;\n  transition: all .2s ease-in-out;\n  width: 100%; }\n  div.info-card .card-content {\n    max-width: 400px;\n    margin: 0 auto; }\n  div.info-card.show {\n    bottom: 0px; }\n  .title {\n  margin-bottom: 5px; }\n  .green {\n  background: lightgreen; }\n  .red {\n  background: salmon;\n  text-decoration: line-through; }\n  .location-status {\n  padding: 3px;\n  border-radius: 5px;\n  font-size: 16px;\n  color: #333;\n  margin: 0 5px; }\n  figure {\n  height: 20px;\n  width: 100%;\n  background: salmon; }\n  .fave-btn {\n  position: absolute;\n  right: 10%;\n  top: 20px; }\n  .fave-btn {\n  color: salmon;\n  transition: all .2s ease-in-out; }\n  .fave-btn:hover {\n    color: salmon; }\n\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9hZG1pbi9EZXNrdG9wL2Rldi9wZXJzb25hbC1wcm9qZWN0cy9kdWJsaW4tYmlrZXMvbmctZGJpa2VzL3NyYy9hcHAvY29tcG9uZW50cy9pbmZvL2luZm8uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSxlQUFlO0VBQ2YsZUFBZTtFQUNmLCtCQUErQjtFQUMvQixXQUFXLEVBQUE7RUFKYjtJQU1JLGdCQUFnQjtJQUNoQixjQUFjLEVBQUE7RUFQbEI7SUFVSSxXQUFXLEVBQUE7RUFJZjtFQUNFLGtCQUFrQixFQUFBO0VBR3BCO0VBQ0Usc0JBQXNCLEVBQUE7RUFHeEI7RUFDRSxrQkFBa0I7RUFDbEIsNkJBQTZCLEVBQUE7RUFHL0I7RUFDRSxZQUFZO0VBQ1osa0JBQWtCO0VBQ2xCLGVBQWU7RUFDZixXQUFXO0VBQ1gsYUFBYSxFQUFBO0VBR2Y7RUFDRSxZQUFZO0VBQ1osV0FBVztFQUNYLGtCQUFrQixFQUFBO0VBR3BCO0VBQ0Usa0JBQWtCO0VBQ2xCLFVBQVU7RUFDVixTQUFTLEVBQUE7RUFHWDtFQUNFLGFBQWE7RUFDYiwrQkFBK0IsRUFBQTtFQUZqQztJQUlJLGFBQWEsRUFBQSIsImZpbGUiOiJzcmMvYXBwL2NvbXBvbmVudHMvaW5mby9pbmZvLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiZGl2LmluZm8tY2FyZCB7XG4gIHBvc2l0aW9uOiBmaXhlZDtcbiAgYm90dG9tOiAtMTAwMHB4O1xuICB0cmFuc2l0aW9uOiBhbGwgLjJzIGVhc2UtaW4tb3V0O1xuICB3aWR0aDogMTAwJTtcbiAgLmNhcmQtY29udGVudCB7XG4gICAgbWF4LXdpZHRoOiA0MDBweDtcbiAgICBtYXJnaW46IDAgYXV0bztcbiAgfVxuICAmLnNob3cge1xuICAgIGJvdHRvbTogMHB4O1xuICB9XG59XG5cbi50aXRsZSB7XG4gIG1hcmdpbi1ib3R0b206IDVweDtcbn1cblxuLmdyZWVuIHtcbiAgYmFja2dyb3VuZDogbGlnaHRncmVlbjtcbn1cblxuLnJlZCB7XG4gIGJhY2tncm91bmQ6IHNhbG1vbjtcbiAgdGV4dC1kZWNvcmF0aW9uOiBsaW5lLXRocm91Z2g7XG59XG5cbi5sb2NhdGlvbi1zdGF0dXMge1xuICBwYWRkaW5nOiAzcHg7XG4gIGJvcmRlci1yYWRpdXM6IDVweDtcbiAgZm9udC1zaXplOiAxNnB4O1xuICBjb2xvcjogIzMzMztcbiAgbWFyZ2luOiAwIDVweDtcbn1cblxuZmlndXJlIHtcbiAgaGVpZ2h0OiAyMHB4O1xuICB3aWR0aDogMTAwJTtcbiAgYmFja2dyb3VuZDogc2FsbW9uO1xufVxuXG4uZmF2ZS1idG4ge1xuICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gIHJpZ2h0OiAxMCU7XG4gIHRvcDogMjBweDtcbn1cblxuLmZhdmUtYnRuIHtcbiAgY29sb3I6IHNhbG1vbjtcbiAgdHJhbnNpdGlvbjogYWxsIC4ycyBlYXNlLWluLW91dDtcbiAgJjpob3ZlciB7XG4gICAgY29sb3I6IHNhbG1vbjtcbiAgfVxufSJdfQ== */"
 
 /***/ }),
 
@@ -361,7 +373,7 @@ var InfoComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div *ngIf=\"location.coords\">\n  <agm-map [latitude]=\"lat\" [longitude]=\"lng\" [zoom]=\"16\" [usePanning]=\"true\" (mapClick)=\"mapClick($event)\"\n    (mapReady)=\"mapReady($event)\" (idle)=\"mapIdle($event)\">\n    <agm-marker [latitude]=\"location.coords.latitude\" [longitude]=\"location.coords.longitude\">\n    </agm-marker>\n    <agm-marker *ngFor=\"let loc of locations; let i = index;\" [latitude]=\"loc.position.lat\"\n      [longitude]=\"loc.position.lng\" (markerClick)=\"markerClick($event, loc)\"\n      [iconUrl]=\"'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bbT|' + loc.available_bikes + ' / ' + loc.available_bike_stands + '|' + (loc.available_bikes > 3 ? '29c929' : 'd26559') + '|' + (favesList.indexOf(loc.number) >= 0 ? 'ffff00' : '222222') + '|'\">\n    </agm-marker>\n  </agm-map>\n</div>\n\n<button (click)=\"toggleFaveList()\" class=\"fave-menu-btn button is-primary is-rounded\"> &lt;3 </button>\n<app-info [location]=\"selectedLocation\"></app-info>\n<app-favourites></app-favourites>"
+module.exports = "<div *ngIf=\"location.coords\">\n  <agm-map [latitude]=\"lat\" [longitude]=\"lng\" [zoom]=\"16\" [usePanning]=\"true\" (mapClick)=\"mapClick($event)\"\n    (mapReady)=\"mapReady($event)\" (idle)=\"mapIdle($event)\">\n    <agm-marker [latitude]=\"location.coords.latitude\" [longitude]=\"location.coords.longitude\">\n    </agm-marker>\n    <agm-marker-cluster imagePath=\"https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m\">\n      <agm-marker *ngFor=\"let loc of locations; let i = index;\" [latitude]=\"loc.position.lat\"\n        [longitude]=\"loc.position.lng\" (markerClick)=\"markerClick($event, loc)\"\n        [iconUrl]=\"'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bbT|' + loc.available_bikes + ' / ' + loc.available_bike_stands + '|' + (loc.available_bikes > 3 ? '29c929' : 'd26559') + '|' + (favesList.indexOf(loc.number) >= 0 ? 'ffff00' : '222222') + '|'\">\n      </agm-marker>\n    </agm-marker-cluster>\n  </agm-map>\n</div>\n\n<button (click)=\"toggleFaveList()\" class=\"fave-menu-btn button is-primary is-rounded\"> <i class=\"fas fa-list\"></i> </button>\n<app-info [location]=\"selectedLocation\"></app-info>\n<app-favourites (notifyMap)=\"panToLocation($event)\"></app-favourites>"
 
 /***/ }),
 
@@ -391,6 +403,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_app_services_bikes_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/bikes.service */ "./src/app/services/bikes.service.ts");
 /* harmony import */ var src_app_services_storage_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/services/storage.service */ "./src/app/services/storage.service.ts");
 /* harmony import */ var _favourites_favourites_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../favourites/favourites.component */ "./src/app/components/favourites/favourites.component.ts");
+/* harmony import */ var _agm_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @agm/core */ "./node_modules/@agm/core/index.js");
+
 
 
 
@@ -413,15 +427,19 @@ var MapComponent = /** @class */ (function () {
                 _this.location = pos;
                 _this.lat = pos.coords.latitude;
                 _this.lng = pos.coords.longitude;
-                console.log('usr location', pos);
+                // console.log('usr location', pos);
             });
         }
         else {
-            console.log('no navigator');
+            // console.log('no navigator');
         }
         this.storage.faves.subscribe(function (faves) {
             _this.favesList = faves;
         });
+    };
+    MapComponent.prototype.panToLocation = function (l) {
+        this.markerClick('poop', l);
+        this.toggleFaveList();
     };
     MapComponent.prototype.formatMarker = function (loc) {
         return loc.available_bikes.toString() + " / " + loc.available_bike_stands.toString();
@@ -431,24 +449,31 @@ var MapComponent = /** @class */ (function () {
         this.favesEl.nativeElement.classList.toggle('open');
     };
     MapComponent.prototype.markerClick = function (e, location) {
-        console.log(e);
+        // @ts-ignore
+        this.map.panTo(location.position);
+        // @ts-ignore
+        this.map.setZoom(17);
         this.selectedLocation = location;
-        console.log(location);
     };
     MapComponent.prototype.mapClick = function (e) {
-        console.log('mapClick', e);
+        // console.log('mapClick', e);
         this.selectedLocation = {};
     };
     MapComponent.prototype.mapReady = function (e) {
-        console.log('mapReady', e);
+        // console.log('mapReady', e);
+        this.map = e;
     };
     MapComponent.prototype.mapIdle = function (e) {
-        console.log('mapIdle', e);
+        // console.log('mapIdle', e);
     };
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])(_favourites_favourites_component__WEBPACK_IMPORTED_MODULE_4__["FavouritesComponent"], { read: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ElementRef"] }),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _favourites_favourites_component__WEBPACK_IMPORTED_MODULE_4__["FavouritesComponent"])
     ], MapComponent.prototype, "favesEl", void 0);
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('map'),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", _agm_core__WEBPACK_IMPORTED_MODULE_5__["AgmMap"])
+    ], MapComponent.prototype, "map", void 0);
     MapComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-map',
@@ -693,7 +718,7 @@ var StorageService = /** @class */ (function () {
         var locations = JSON.parse(localStorage.getItem('locations'));
         var faves = JSON.parse(localStorage.getItem('faves'));
         if (faves.indexOf(location.number >= 0)) {
-            console.log(faves, location.number);
+            // console.log(faves, location.number);
             var newFaves = faves.filter(function (n) { return n != location.number; });
             localStorage.setItem('faves', JSON.stringify(newFaves));
             this.storeLocations(locations);
