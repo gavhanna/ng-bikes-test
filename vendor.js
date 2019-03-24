@@ -73886,6 +73886,656 @@ var VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_2__["Version"]('7.2.6')
 
 /***/ }),
 
+/***/ "./node_modules/@angular/service-worker/fesm5/service-worker.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@angular/service-worker/fesm5/service-worker.js ***!
+  \**********************************************************************/
+/*! exports provided: ɵangular_packages_service_worker_service_worker_a, ɵangular_packages_service_worker_service_worker_b, ɵangular_packages_service_worker_service_worker_c, ɵangular_packages_service_worker_service_worker_d, ɵangular_packages_service_worker_service_worker_e, ServiceWorkerModule, SwPush, SwUpdate */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_service_worker_service_worker_a", function() { return NgswCommChannel; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_service_worker_service_worker_b", function() { return RegistrationOptions; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_service_worker_service_worker_c", function() { return SCRIPT; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_service_worker_service_worker_d", function() { return ngswAppInitializer; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ɵangular_packages_service_worker_service_worker_e", function() { return ngswCommChannelFactory; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ServiceWorkerModule", function() { return ServiceWorkerModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SwPush", function() { return SwPush; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SwUpdate", function() { return SwUpdate; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm5/operators/index.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm5/index.js");
+/**
+ * @license Angular v7.2.9
+ * (c) 2010-2019 Google LLC. https://angular.io/
+ * License: MIT
+ */
+
+
+
+
+
+
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+var ERR_SW_NOT_SUPPORTED = 'Service workers are disabled or not supported by this browser';
+function errorObservable(message) {
+    return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["defer"])(function () { return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["throwError"])(new Error(message)); });
+}
+/**
+ * @publicApi
+ */
+var NgswCommChannel = /** @class */ (function () {
+    function NgswCommChannel(serviceWorker) {
+        this.serviceWorker = serviceWorker;
+        if (!serviceWorker) {
+            this.worker = this.events = this.registration = errorObservable(ERR_SW_NOT_SUPPORTED);
+        }
+        else {
+            var controllerChangeEvents = Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["fromEvent"])(serviceWorker, 'controllerchange');
+            var controllerChanges = controllerChangeEvents.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function () { return serviceWorker.controller; }));
+            var currentController = Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["defer"])(function () { return Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["of"])(serviceWorker.controller); });
+            var controllerWithChanges = Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["concat"])(currentController, controllerChanges);
+            this.worker = controllerWithChanges.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["filter"])(function (c) { return !!c; }));
+            this.registration = (this.worker.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(function () { return serviceWorker.getRegistration(); })));
+            var rawEvents = Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["fromEvent"])(serviceWorker, 'message');
+            var rawEventPayload = rawEvents.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (event) { return event.data; }));
+            var eventsUnconnected = rawEventPayload.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["filter"])(function (event) { return event && event.type; }));
+            var events = eventsUnconnected.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["publish"])());
+            events.connect();
+            this.events = events;
+        }
+    }
+    NgswCommChannel.prototype.postMessage = function (action, payload) {
+        return this.worker
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function (sw) {
+            sw.postMessage(Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__assign"])({ action: action }, payload));
+        }))
+            .toPromise()
+            .then(function () { return undefined; });
+    };
+    NgswCommChannel.prototype.postMessageWithStatus = function (type, payload, nonce) {
+        var waitForStatus = this.waitForStatus(nonce);
+        var postMessage = this.postMessage(type, payload);
+        return Promise.all([waitForStatus, postMessage]).then(function () { return undefined; });
+    };
+    NgswCommChannel.prototype.generateNonce = function () { return Math.round(Math.random() * 10000000); };
+    NgswCommChannel.prototype.eventsOfType = function (type) {
+        var filterFn = function (event) { return event.type === type; };
+        return this.events.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["filter"])(filterFn));
+    };
+    NgswCommChannel.prototype.nextEventOfType = function (type) {
+        return this.eventsOfType(type).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1));
+    };
+    NgswCommChannel.prototype.waitForStatus = function (nonce) {
+        return this.eventsOfType('STATUS')
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["filter"])(function (event) { return event.nonce === nonce; }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (event) {
+            if (event.status) {
+                return undefined;
+            }
+            throw new Error(event.error);
+        }))
+            .toPromise();
+    };
+    Object.defineProperty(NgswCommChannel.prototype, "isEnabled", {
+        get: function () { return !!this.serviceWorker; },
+        enumerable: true,
+        configurable: true
+    });
+    return NgswCommChannel;
+}());
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+/**
+ * Subscribe and listen to push notifications from the Service Worker.
+ *
+ * @publicApi
+ */
+var SwPush = /** @class */ (function () {
+    function SwPush(sw) {
+        this.sw = sw;
+        this.subscriptionChanges = new rxjs__WEBPACK_IMPORTED_MODULE_4__["Subject"]();
+        if (!sw.isEnabled) {
+            this.messages = rxjs__WEBPACK_IMPORTED_MODULE_4__["NEVER"];
+            this.notificationClicks = rxjs__WEBPACK_IMPORTED_MODULE_4__["NEVER"];
+            this.subscription = rxjs__WEBPACK_IMPORTED_MODULE_4__["NEVER"];
+            return;
+        }
+        this.messages = this.sw.eventsOfType('PUSH').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (message) { return message.data; }));
+        this.notificationClicks =
+            this.sw.eventsOfType('NOTIFICATION_CLICK').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (message) { return message.data; }));
+        this.pushManager = this.sw.registration.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["map"])(function (registration) { return registration.pushManager; }));
+        var workerDrivenSubscriptions = this.pushManager.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(function (pm) { return pm.getSubscription(); }));
+        this.subscription = Object(rxjs__WEBPACK_IMPORTED_MODULE_4__["merge"])(workerDrivenSubscriptions, this.subscriptionChanges);
+    }
+    Object.defineProperty(SwPush.prototype, "isEnabled", {
+        /**
+         * True if the Service Worker is enabled (supported by the browser and enabled via
+         * `ServiceWorkerModule`).
+         */
+        get: function () { return this.sw.isEnabled; },
+        enumerable: true,
+        configurable: true
+    });
+    SwPush.prototype.requestSubscription = function (options) {
+        var _this = this;
+        if (!this.sw.isEnabled) {
+            return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+        }
+        var pushOptions = { userVisibleOnly: true };
+        var key = this.decodeBase64(options.serverPublicKey.replace(/_/g, '/').replace(/-/g, '+'));
+        var applicationServerKey = new Uint8Array(new ArrayBuffer(key.length));
+        for (var i = 0; i < key.length; i++) {
+            applicationServerKey[i] = key.charCodeAt(i);
+        }
+        pushOptions.applicationServerKey = applicationServerKey;
+        return this.pushManager.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(function (pm) { return pm.subscribe(pushOptions); }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1))
+            .toPromise()
+            .then(function (sub) {
+            _this.subscriptionChanges.next(sub);
+            return sub;
+        });
+    };
+    SwPush.prototype.unsubscribe = function () {
+        var _this = this;
+        if (!this.sw.isEnabled) {
+            return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+        }
+        var doUnsubscribe = function (sub) {
+            if (sub === null) {
+                throw new Error('Not subscribed to push notifications.');
+            }
+            return sub.unsubscribe().then(function (success) {
+                if (!success) {
+                    throw new Error('Unsubscribe failed!');
+                }
+                _this.subscriptionChanges.next(null);
+            });
+        };
+        return this.subscription.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["switchMap"])(doUnsubscribe)).toPromise();
+    };
+    SwPush.prototype.decodeBase64 = function (input) { return atob(input); };
+    SwPush = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["Injectable"])(),
+        Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [NgswCommChannel])
+    ], SwPush);
+    return SwPush;
+}());
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+/**
+ * Subscribe to update notifications from the Service Worker, trigger update
+ * checks, and forcibly activate updates.
+ *
+ * @publicApi
+ */
+var SwUpdate = /** @class */ (function () {
+    function SwUpdate(sw) {
+        this.sw = sw;
+        if (!sw.isEnabled) {
+            this.available = rxjs__WEBPACK_IMPORTED_MODULE_4__["NEVER"];
+            this.activated = rxjs__WEBPACK_IMPORTED_MODULE_4__["NEVER"];
+            return;
+        }
+        this.available = this.sw.eventsOfType('UPDATE_AVAILABLE');
+        this.activated = this.sw.eventsOfType('UPDATE_ACTIVATED');
+    }
+    Object.defineProperty(SwUpdate.prototype, "isEnabled", {
+        /**
+         * True if the Service Worker is enabled (supported by the browser and enabled via
+         * `ServiceWorkerModule`).
+         */
+        get: function () { return this.sw.isEnabled; },
+        enumerable: true,
+        configurable: true
+    });
+    SwUpdate.prototype.checkForUpdate = function () {
+        if (!this.sw.isEnabled) {
+            return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+        }
+        var statusNonce = this.sw.generateNonce();
+        return this.sw.postMessageWithStatus('CHECK_FOR_UPDATES', { statusNonce: statusNonce }, statusNonce);
+    };
+    SwUpdate.prototype.activateUpdate = function () {
+        if (!this.sw.isEnabled) {
+            return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+        }
+        var statusNonce = this.sw.generateNonce();
+        return this.sw.postMessageWithStatus('ACTIVATE_UPDATE', { statusNonce: statusNonce }, statusNonce);
+    };
+    SwUpdate = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["Injectable"])(),
+        Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"])("design:paramtypes", [NgswCommChannel])
+    ], SwUpdate);
+    return SwUpdate;
+}());
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+var RegistrationOptions = /** @class */ (function () {
+    function RegistrationOptions() {
+    }
+    return RegistrationOptions;
+}());
+var SCRIPT = new _angular_core__WEBPACK_IMPORTED_MODULE_2__["InjectionToken"]('NGSW_REGISTER_SCRIPT');
+function ngswAppInitializer(injector, script, options, platformId) {
+    var initializer = function () {
+        var app = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ApplicationRef"]);
+        if (!(Object(_angular_common__WEBPACK_IMPORTED_MODULE_1__["isPlatformBrowser"])(platformId) && ('serviceWorker' in navigator) &&
+            options.enabled !== false)) {
+            return;
+        }
+        var whenStable = app.isStable.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["filter"])(function (stable) { return !!stable; }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["take"])(1)).toPromise();
+        // Wait for service worker controller changes, and fire an INITIALIZE action when a new SW
+        // becomes active. This allows the SW to initialize itself even if there is no application
+        // traffic.
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+            if (navigator.serviceWorker.controller !== null) {
+                navigator.serviceWorker.controller.postMessage({ action: 'INITIALIZE' });
+            }
+        });
+        // Don't return the Promise, as that will block the application until the SW is registered, and
+        // cause a crash if the SW registration fails.
+        whenStable.then(function () { return navigator.serviceWorker.register(script, { scope: options.scope }); });
+    };
+    return initializer;
+}
+function ngswCommChannelFactory(opts, platformId) {
+    return new NgswCommChannel(Object(_angular_common__WEBPACK_IMPORTED_MODULE_1__["isPlatformBrowser"])(platformId) && opts.enabled !== false ? navigator.serviceWorker :
+        undefined);
+}
+/**
+ * @publicApi
+ */
+var ServiceWorkerModule = /** @class */ (function () {
+    function ServiceWorkerModule() {
+    }
+    ServiceWorkerModule_1 = ServiceWorkerModule;
+    /**
+     * Register the given Angular Service Worker script.
+     *
+     * If `enabled` is set to `false` in the given options, the module will behave as if service
+     * workers are not supported by the browser, and the service worker will not be registered.
+     */
+    ServiceWorkerModule.register = function (script, opts) {
+        if (opts === void 0) { opts = {}; }
+        return {
+            ngModule: ServiceWorkerModule_1,
+            providers: [
+                { provide: SCRIPT, useValue: script },
+                { provide: RegistrationOptions, useValue: opts },
+                {
+                    provide: NgswCommChannel,
+                    useFactory: ngswCommChannelFactory,
+                    deps: [RegistrationOptions, _angular_core__WEBPACK_IMPORTED_MODULE_2__["PLATFORM_ID"]]
+                },
+                {
+                    provide: _angular_core__WEBPACK_IMPORTED_MODULE_2__["APP_INITIALIZER"],
+                    useFactory: ngswAppInitializer,
+                    deps: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["Injector"], SCRIPT, RegistrationOptions, _angular_core__WEBPACK_IMPORTED_MODULE_2__["PLATFORM_ID"]],
+                    multi: true,
+                },
+            ],
+        };
+    };
+    var ServiceWorkerModule_1;
+    ServiceWorkerModule = ServiceWorkerModule_1 = Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"])([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_2__["NgModule"])({
+            providers: [SwPush, SwUpdate],
+        })
+    ], ServiceWorkerModule);
+    return ServiceWorkerModule;
+}());
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+// This file only reexports content of the `src` folder. Keep it that way.
+
+/**
+ * @license
+ * Copyright Google Inc. All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+/**
+ * Generated bundle index. Do not edit.
+ */
+
+
+//# sourceMappingURL=service-worker.js.map
+
+
+/***/ }),
+
+/***/ "./node_modules/agm-overlays/AgmOverlay.component.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/agm-overlays/AgmOverlay.component.js ***!
+  \***********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+var core_2 = __webpack_require__(/*! @agm/core */ "./node_modules/@agm/core/index.js");
+var AgmOverlay = (function () {
+    function AgmOverlay(_mapsWrapper, _markerManager) {
+        this._mapsWrapper = _mapsWrapper;
+        this._markerManager = _markerManager;
+        this.visible = true;
+        this.zIndex = 1;
+        this.markerClick = new core_1.EventEmitter();
+        this.openInfoWindow = true;
+        this.infoWindow = new core_1.QueryList();
+        this.draggable = false;
+        this._observableSubscriptions = [];
+    }
+    AgmOverlay.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        var iWins = this.template.nativeElement.getElementsByTagName('agm-info-window');
+        for (var x = iWins.length - 1; x >= 0; --x) {
+            iWins[x].parentNode.removeChild(iWins[x]);
+        }
+        this.load().then(function () {
+            _this.onChanges = _this.onChangesOverride;
+        });
+    };
+    AgmOverlay.prototype.ngAfterContentInit = function () {
+        var _this = this;
+        this.infoWindow.changes.subscribe(function () { return _this.handleInfoWindowUpdate(); });
+    };
+    AgmOverlay.prototype.ngOnChanges = function (changes) {
+        this.onChanges(changes);
+    };
+    AgmOverlay.prototype.onChanges = function (changes) { };
+    AgmOverlay.prototype.onChangesOverride = function (changes) {
+        var _this = this;
+        if (changes.latitude || changes.longitude || changes.zIndex) {
+            this.overlayView.latitude = this.latitude;
+            this.overlayView.longitude = this.longitude;
+            this.overlayView.zIndex = this.zIndex;
+            this.destroy().then(function () { return _this.load(); });
+        }
+    };
+    AgmOverlay.prototype.ngOnDestroy = function () {
+        this.destroy();
+    };
+    AgmOverlay.prototype.destroy = function () {
+        this.destroyed = true;
+        var promise = this._markerManager.deleteMarker(this.overlayView);
+        if (this.overlayView) {
+            if (this.overlayView.div) {
+                this.overlayView.remove();
+            }
+            this.overlayView.setMap(null);
+        }
+        this._observableSubscriptions.forEach(function (s) { return s.unsubscribe(); });
+        delete this.overlayView;
+        return promise;
+    };
+    AgmOverlay.prototype.handleInfoWindowUpdate = function () {
+        var _this = this;
+        if (this.infoWindow.length > 1) {
+            throw new Error('Expected no more than one info window.');
+        }
+        this.infoWindow.forEach(function (iWin) {
+            iWin.hostMarker = _this.overlayView;
+        });
+    };
+    AgmOverlay.prototype.load = function () {
+        var _this = this;
+        return this._mapsWrapper.getNativeMap()
+            .then(function (map) {
+            var overlay = _this.getOverlay(map);
+            _this._markerManager.addMarker(overlay);
+            _this._addEventListeners();
+            return _this._markerManager.getNativeMarker(overlay);
+        })
+            .then(function (nativeMarker) {
+            var setMap = nativeMarker.setMap;
+            if (nativeMarker['map']) {
+                _this.overlayView.setMap(nativeMarker['map']);
+            }
+            nativeMarker.setMap = function (map) {
+                setMap.call(nativeMarker, map);
+                if (_this.overlayView) {
+                    _this.overlayView.setMap(map);
+                }
+            };
+        });
+    };
+    AgmOverlay.prototype.getOverlay = function (map) {
+        var _this = this;
+        this.overlayView = this.overlayView || new google.maps.OverlayView();
+        this.overlayView.iconUrl = " ";
+        this.overlayView.latitude = this.latitude;
+        this.overlayView.longitude = this.longitude;
+        this.overlayView.visible = false;
+        if (this.bounds) {
+            this.overlayView.bounds_ = new google.maps.LatLngBounds(new google.maps.LatLng(this.latitude + this.bounds.x.latitude, this.longitude + this.bounds.x.longitude), new google.maps.LatLng(this.latitude + this.bounds.y.latitude, this.longitude + this.bounds.y.longitude));
+        }
+        var elm = this.template.nativeElement.children[0];
+        var restore = function (div) {
+            _this.template.nativeElement.appendChild(div);
+        };
+        this.overlayView.remove = function () {
+            if (!this.div)
+                return;
+            this.div.parentNode.removeChild(this.div);
+            restore(this.div);
+            delete this.div;
+        };
+        this.overlayView.getDiv = function () {
+            return this.div;
+        };
+        this.overlayView.draw = function () {
+            if (!this.div) {
+                this.div = elm;
+                var panes = this.getPanes();
+                if (!panes || !panes.overlayImage)
+                    return;
+                panes.overlayImage.appendChild(elm);
+            }
+            var latlng = new google.maps.LatLng(this.latitude, this.longitude);
+            var proj = this.getProjection();
+            if (!proj)
+                return;
+            var point = proj.fromLatLngToDivPixel(latlng);
+            if (point) {
+                elm.style.left = (point.x - 10) + 'px';
+                elm.style.top = (point.y - 20) + 'px';
+            }
+            if (this.bounds_) {
+                var proj_1 = this.getProjection();
+                var sw = proj_1.fromLatLngToDivPixel(this.bounds_.getSouthWest());
+                var ne = proj_1.fromLatLngToDivPixel(this.bounds_.getNorthEast());
+                this.div.style.left = sw.x + 'px';
+                this.div.style.top = ne.y + 'px';
+                this.div.children[0].style.width = ne.x - sw.x + 'px';
+                this.div.children[0].style.height = sw.y - ne.y + 'px';
+            }
+        };
+        elm.addEventListener("click", function (event) { return _this.handleTap(); });
+        this.handleInfoWindowUpdate();
+        return this.overlayView;
+    };
+    AgmOverlay.prototype.handleTap = function () {
+        if (this.openInfoWindow) {
+            this.infoWindow.forEach(function (infoWindow) {
+                infoWindow.open();
+            });
+        }
+        this.markerClick.emit(null);
+    };
+    AgmOverlay.prototype._addEventListeners = function () {
+        var _this = this;
+        var eo = this._markerManager.createEventObservable('click', this.overlayView);
+        var cs = eo.subscribe(function () { return _this.handleTap(); });
+        this._observableSubscriptions.push(cs);
+    };
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number)
+    ], AgmOverlay.prototype, "latitude", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number)
+    ], AgmOverlay.prototype, "longitude", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], AgmOverlay.prototype, "visible", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Number)
+    ], AgmOverlay.prototype, "zIndex", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Object)
+    ], AgmOverlay.prototype, "bounds", void 0);
+    __decorate([
+        core_1.Output(),
+        __metadata("design:type", core_1.EventEmitter)
+    ], AgmOverlay.prototype, "markerClick", void 0);
+    __decorate([
+        core_1.Input(),
+        __metadata("design:type", Boolean)
+    ], AgmOverlay.prototype, "openInfoWindow", void 0);
+    __decorate([
+        core_1.ContentChildren(core_2.AgmInfoWindow),
+        __metadata("design:type", core_1.QueryList)
+    ], AgmOverlay.prototype, "infoWindow", void 0);
+    __decorate([
+        core_1.Input('markerDraggable'),
+        __metadata("design:type", Boolean)
+    ], AgmOverlay.prototype, "draggable", void 0);
+    __decorate([
+        core_1.ViewChild('content', { read: core_1.ElementRef }),
+        __metadata("design:type", core_1.ElementRef)
+    ], AgmOverlay.prototype, "template", void 0);
+    AgmOverlay = __decorate([
+        core_1.Component({
+            selector: "agm-overlay",
+            template: '<div #content><div style="position:absolute"><ng-content></ng-content></div></div>'
+        }),
+        __metadata("design:paramtypes", [core_2.GoogleMapsAPIWrapper,
+            core_2.MarkerManager])
+    ], AgmOverlay);
+    return AgmOverlay;
+}());
+exports.AgmOverlay = AgmOverlay;
+
+
+/***/ }),
+
+/***/ "./node_modules/agm-overlays/AgmOverlays.module.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/agm-overlays/AgmOverlays.module.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var core_1 = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm5/core.js");
+var common_1 = __webpack_require__(/*! @angular/common */ "./node_modules/@angular/common/fesm5/common.js");
+var AgmOverlay_component_1 = __webpack_require__(/*! ./AgmOverlay.component */ "./node_modules/agm-overlays/AgmOverlay.component.js");
+var AgmOverlays = (function () {
+    function AgmOverlays() {
+    }
+    AgmOverlays = __decorate([
+        core_1.NgModule({
+            imports: [
+                common_1.CommonModule
+            ],
+            declarations: [AgmOverlay_component_1.AgmOverlay],
+            exports: [AgmOverlay_component_1.AgmOverlay],
+        })
+    ], AgmOverlays);
+    return AgmOverlays;
+}());
+exports.AgmOverlays = AgmOverlays;
+
+
+/***/ }),
+
+/***/ "./node_modules/agm-overlays/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/agm-overlays/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(/*! ./AgmOverlay.component */ "./node_modules/agm-overlays/AgmOverlay.component.js"));
+__export(__webpack_require__(/*! ./AgmOverlays.module */ "./node_modules/agm-overlays/AgmOverlays.module.js"));
+
+
+/***/ }),
+
 /***/ "./node_modules/js-marker-clusterer/src/markerclusterer.js":
 /*!*****************************************************************!*\
   !*** ./node_modules/js-marker-clusterer/src/markerclusterer.js ***!
